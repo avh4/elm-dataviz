@@ -1,4 +1,4 @@
-This module provides functions to render tabular views of data.
+This package provides a simple way to render tabular views of data.
 
 ```elm
 import Table
