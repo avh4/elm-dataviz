@@ -4,10 +4,19 @@ import GraphExample
 import TableExample
 
 
+demos =
+    [ ("Tables", TableExample.main)
+    , ("Graphs", GraphExample.main)
+    ]
+
+
+renderDemo (title, view) =
+    [ Html.h2 [] [ Html.text title]
+    , view
+    ]
+
+
 main =
-    Html.div []
-        [ Html.h2 [] [ Html.text "Tables"]
-        , TableExample.main
-        , Html.h2 [] [ Html.text "Graphs"]
-        , GraphExample.main
-        ]
+    demos
+    |> List.concatMap renderDemo
+    |> Html.div []
