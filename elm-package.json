@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
-    "summary": "simple rendering of tabular data",
-    "repository": "https://github.com/avh4/elm-table.git",
+    "summary": "data visualization made simple",
+    "repository": "https://github.com/avh4/elm-dataviz.git",
     "license": "MIT",
     "source-directories": [
         "."
