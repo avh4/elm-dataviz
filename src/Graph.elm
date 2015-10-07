@@ -1,5 +1,5 @@
 module Graph
-    ( xyDataset
+    ( xyDataset, matrixDataset
     , graph, matrix
     ) where
 
@@ -10,6 +10,9 @@ import Html exposing (Html)
 import Html.Attributes as Html
 import Number.Format
 import Table
+import Array exposing (Array)
+import Set exposing (Set)
+import Dict exposing (Dict)
 
 
 type alias Point = (Float, Float)
@@ -30,6 +33,41 @@ xyDataset name (xl,xf) (yl,yf) values =
     , x = xl
     , y = yl
     }
+
+
+type alias DenseDataset =
+    { name: String
+    , values: Array (Array Float)
+    , x: String
+    , y: String
+    , v: String
+    }
+
+
+matrixDataset :
+    String
+    -> (String, a -> Float)
+    -> (String, a -> Float)
+    -> (String, a -> Float)
+    -> Float
+    -> List a
+    -> DenseDataset
+matrixDataset name (xl,xf) (yl,yf) (vl,vf) default values =
+    let
+        step a (xs,ys,vs) =
+            ( Set.insert (xf a) xs
+            , Set.insert (yf a) ys
+            , Dict.insert (xf a,yf a) (vf a) vs
+            )
+        (xs,ys,vs) =
+            List.foldl step (Set.empty, Set.empty, Dict.empty) values
+    in
+        { name = name
+        , values =
+            Array.map (\x -> Array.map (\y -> Dict.get (x,y) vs |> Maybe.withDefault default) (Array.fromList <| Set.toList ys)) (Array.fromList <| Set.toList xs)
+        , x = xl, y = yl, v = vl
+        }
+
 
 scatterPlot : Normalize -> String -> Dataset -> Svg
 scatterPlot normalize color data =
@@ -208,10 +246,11 @@ color' min max x =
       Html.div [ Html.style [("background", c), ("width", "5px"), ("height", "5px")]] []
 
 
-matrix : List (List Float) -> Html
+matrix : DenseDataset -> Html
 matrix model =
   let
-      min = List.concat model |> List.minimum |> Maybe.withDefault 0
-      max = List.concat model |> List.maximum |> Maybe.withDefault 1
+      asList = model.values |> Array.map (Array.toList) |> Array.toList
+      min = asList |> List.concat |> List.minimum |> Maybe.withDefault 0
+      max = asList |> List.concat |> List.maximum |> Maybe.withDefault 1
   in
-      Table.matrix (color' min max) model
+      Table.matrix (color' min max) asList
