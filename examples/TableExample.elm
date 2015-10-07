@@ -1,3 +1,5 @@
+module TableExample where
+
 import Table
 
 data =

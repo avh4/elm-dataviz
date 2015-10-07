@@ -1,3 +1,5 @@
+module GraphExample where
+
 import Graph
 
 

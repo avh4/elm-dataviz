@@ -22,5 +22,5 @@ main =
 
 ```bash
 (cd examples; elm-package install; elm-reactor)
-open http://localhost:8080/Examples.elm
+open http://localhost:8080/AllExamples.elm
 ```
