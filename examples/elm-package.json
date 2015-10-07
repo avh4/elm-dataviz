@@ -1,14 +1,13 @@
 {
     "version": "1.0.0",
-    "summary": "data visualization made simple",
-    "repository": "https://github.com/avh4/elm-dataviz.git",
+    "summary": "helpful summary of your project, less than 80 characters",
+    "repository": "https://github.com/USER/PROJECT.git",
     "license": "MIT",
     "source-directories": [
-        "src"
+        ".",
+        "../src"
     ],
-    "exposed-modules": [
-        "Table"
-    ],
+    "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "2.1.0 <= v < 3.0.0",
         "evancz/elm-html": "4.0.1 <= v < 5.0.0"

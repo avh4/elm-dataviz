@@ -17,3 +17,10 @@ main =
         , ("max", List.foldr max -9999 >> toString)
         ]
 ```
+
+## Running the examples from source
+
+```bash
+(cd examples; elm-package install; elm-reactor)
+open http://localhost:8080/Examples.elm
+```
