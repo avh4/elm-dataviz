@@ -1,4 +1,4 @@
-module Table (table) where
+module Table (table, matrix) where
 
 {-|
 
@@ -8,14 +8,14 @@ This module provides functions to render tabular views of data.
 
 -}
 
-import Html
+import Html exposing (Html)
 import Html.Attributes as Html
 
-cell : a -> (a -> String) -> Html.Html
+cell : a -> (a -> String) -> Html
 cell data fn =
     Html.td [] [ Html.text (fn data) ]
 
-row : List (a -> String) -> a -> Html.Html
+row : List (a -> String) -> a -> Html
 row fns row =
     Html.tr [] (List.map (cell row) fns)
 
@@ -43,7 +43,7 @@ main =
 ```
 
 -}
-table : List (String, (a -> String)) -> List a -> Html.Html
+table : List (String, (a -> String)) -> List a -> Html
 table columnDefinitions data =
     let
         headers = (List.map fst columnDefinitions)
@@ -58,3 +58,21 @@ table columnDefinitions data =
         |> List.map (row cellFns)
         |> (::) headerRow
         |> Html.table []
+
+
+matrix : (a -> Html) -> List (List a) -> Html
+matrix cellDefinition data =
+    let
+        singleList a = [a]
+        attrs = [ Html.style
+          [ ("padding", "0")
+          , ("margin", "0")
+          ] ]
+        row data =
+            data
+            |> List.map (cellDefinition >> singleList >> Html.td attrs)
+            |> Html.tr []
+    in
+        data
+        |> List.map row
+        |> Html.table [ Html.style [("border-collapse", "collapse")]]

@@ -1,10 +1,15 @@
-module Graph where
+module Graph
+    ( xyDataset
+    , graph, matrix
+    ) where
 
 
 import Svg exposing (Svg)
 import Svg.Attributes exposing (..)
-import Html
+import Html exposing (Html)
+import Html.Attributes as Html
 import Number.Format
+import Table
 
 
 type alias Point = (Float, Float)
@@ -186,3 +191,27 @@ compareGraph (w,h) xdef ydef data =
     data
     |> List.map (xyDataset "???" xdef ydef)
     |> graph (w,h)
+
+
+color' : Float -> Float -> Float -> Html
+color' min max x =
+    let
+        p = (x-min) / (max-min)
+        c =
+          if | p <=  1/6 -> "#dae8f5"
+             | p <=  2/6 -> "#bad6ea"
+             | p <=  3/6 -> "#88bedc"
+             | p <=  4/6 -> "#539dcc"
+             | p <=  5/6 -> "#297ab9"
+             | otherwise -> "#09559f"
+    in
+      Html.div [ Html.style [("background", c), ("width", "5px"), ("height", "5px")]] []
+
+
+matrix : List (List Float) -> Html
+matrix model =
+  let
+      min = List.concat model |> List.minimum |> Maybe.withDefault 0
+      max = List.concat model |> List.maximum |> Maybe.withDefault 1
+  in
+      Table.matrix (color' min max) model
