@@ -254,4 +254,4 @@ matrix address model =
       min = asList |> List.concat |> List.minimum |> Maybe.withDefault 0
       max = asList |> List.concat |> List.maximum |> Maybe.withDefault 1
   in
-      MatrixTable.matrix (color' min max) address asList
+      MatrixTable.view (color' min max) address asList

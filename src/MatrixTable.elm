@@ -1,6 +1,5 @@
 module MatrixTable where
 
-import Effects
 import Html exposing (Html)
 import Html.Attributes as Html
 import Html.Events as Html
@@ -14,8 +13,8 @@ type Action a
     = Hover a
 
 
-matrix : (a -> Html) -> Signal.Address (Action a) -> Model a -> Html
-matrix cellDefinition address data =
+view : (a -> Html) -> Signal.Address (Action a) -> Model a -> Html
+view cellDefinition address data =
     let
         singleList a = [a]
         attrs a =
