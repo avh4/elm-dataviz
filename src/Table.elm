@@ -1,4 +1,4 @@
-module Table (table, matrix) where
+module Table (table) where
 
 {-|
 
@@ -58,21 +58,3 @@ table columnDefinitions data =
         |> List.map (row cellFns)
         |> (::) headerRow
         |> Html.table []
-
-
-matrix : (a -> Html) -> List (List a) -> Html
-matrix cellDefinition data =
-    let
-        singleList a = [a]
-        attrs = [ Html.style
-          [ ("padding", "0")
-          , ("margin", "0")
-          ] ]
-        row data =
-            data
-            |> List.map (cellDefinition >> singleList >> Html.td attrs)
-            |> Html.tr []
-    in
-        data
-        |> List.map row
-        |> Html.table [ Html.style [("border-collapse", "collapse")]]

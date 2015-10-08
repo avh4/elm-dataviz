@@ -1,5 +1,6 @@
 module Graph
-    ( xyDataset, matrixDataset
+    ( DenseDataset
+    , xyDataset, matrixDataset
     , graph, matrix
     ) where
 
@@ -9,10 +10,10 @@ import Svg.Attributes exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Html
 import Number.Format
-import Table
 import Array exposing (Array)
 import Set exposing (Set)
 import Dict exposing (Dict)
+import MatrixTable
 
 
 type alias Point = (Float, Float)
@@ -246,11 +247,11 @@ color' min max x =
       Html.div [ Html.style [("background", c), ("width", "5px"), ("height", "5px")]] []
 
 
-matrix : DenseDataset -> Html
-matrix model =
+matrix : Signal.Address (MatrixTable.Action Float) -> DenseDataset -> Html
+matrix address model =
   let
       asList = model.values |> Array.map (Array.toList) |> Array.toList
       min = asList |> List.concat |> List.minimum |> Maybe.withDefault 0
       max = asList |> List.concat |> List.maximum |> Maybe.withDefault 1
   in
-      Table.matrix (color' min max) asList
+      MatrixTable.matrix (color' min max) address asList

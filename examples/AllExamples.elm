@@ -1,26 +1,41 @@
 import Html exposing (Html)
 import Html.Attributes as Html
 
+import StartApp
+import Effects
 import GraphExample
 import TableExample
 import MatrixExample
 
 
 demos =
-    [ ("Tables", TableExample.main)
-    , ("Graphs", GraphExample.main)
-    , ("Matrix", MatrixExample.main)
+    [ ("Tables", \_ _ -> TableExample.main)
+    , ("Graphs", \_ _ -> GraphExample.main)
+    , ("Matrix", MatrixExample.view)
     ]
 
 
-renderDemo (title, view) =
+renderDemo address model (title, view) =
     [ Html.h2 [] [ Html.text title]
-    , view
+    , view address model
     ]
+
+
+view address model =
+    demos
+    |> List.concatMap (renderDemo address model)
+    |> Html.div
+        [ Html.style [("padding", "48px")] ]
+
+
+app =
+    StartApp.start
+        { init = MatrixExample.init
+        , update = MatrixExample.update
+        , view = view
+        , inputs = []
+        }
 
 
 main =
-    demos
-    |> List.concatMap renderDemo
-    |> Html.div
-        [ Html.style [("padding", "48px")] ]
+    app.html
