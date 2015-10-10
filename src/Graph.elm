@@ -147,7 +147,7 @@ tickMarkX (w,h) normalize t =
     let
         x' = normalize (t,0) |> fst |> toString
     in
-        [ Svg.line [y2 (toString -h), x1 x', x2 x', stroke "rgb(80,80,80)"] []
+        [ Svg.line [y2 (toString -h), x1 x', x2 x', stroke "rgba(80,80,80,0.4)"] []
         , Svg.text' [x x', dy ".71em", y "10"] [Html.text <| toString t]
         ]
 
@@ -157,7 +157,7 @@ tickMarkY (w,h) normalize t =
     let
         y' = normalize (0,t) |> snd |> toString
     in
-        [ Svg.line [x2 (toString w), y1 y', y2 y', stroke "rgb(80,80,80)"] []
+        [ Svg.line [x2 (toString w), y1 y', y2 y', stroke "rgba(80,80,80,0.4)"] []
         , Svg.text' [textAnchor "end", x "-10", dy ".32em", y y'] [Html.text <| Number.Format.prettyInt ',' <| round t]
         ]
 
@@ -265,7 +265,7 @@ distplot (w,h) data =
         [ Svg.g [ transform "translate(0,30)" ]
             [ xAxis (w,h) xl (xmin, xmax) normalize
             , yAxis (w,h) yl (ymin, ymax) normalize
-            , barPlot normalize "#204a87" data
+            , barPlot normalize "rgba(32,74,136,0.4)" data
             ]
         ]
 
