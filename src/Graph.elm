@@ -1,12 +1,13 @@
 module Graph
     ( DenseDataset
     , xyDataset, matrixDataset
-    , graph, matrix
+    , graph, distplot, matrix
     ) where
 
 
 import Svg exposing (Svg)
 import Svg.Attributes exposing (..)
+import Svg.Attributes as Svg
 import Html exposing (Html)
 import Html.Attributes as Html
 import Number.Format
@@ -17,7 +18,7 @@ import MatrixTable
 
 
 type alias Point = (Float, Float)
-type alias Normalize = (Point -> Point)
+type alias Normalize a = (a -> a)
 type alias Range = (Float, Float)
 
 type alias Dataset =
@@ -70,15 +71,37 @@ matrixDataset name (xl,xf) (yl,yf) (vl,vf) default values =
         }
 
 
-scatterPlot : Normalize -> String -> Dataset -> Svg
+scatterPlot : Normalize Point -> String -> Dataset -> Svg
 scatterPlot normalize color data =
     data.values
     |> List.map normalize
-    |> List.map (\(x,y) -> Svg.circle [ cx <| toString x, cy <| toString y, r "2", fill color] [])
+    |> List.map (\(x,y) -> Svg.circle [ Svg.cx <| toString x, Svg.cy <| toString y, r "2", fill color] [])
     |> Svg.g []
 {-    --         <text className="label-backing" x={p.x} y={p.y} dy="0.3em">{d.name}</text>
     --<text x={p.x} y={p.y} dy="0.3em">{d.name}</text>
 -}
+
+
+barPlot : Normalize Point -> String -> List (Float, Float) -> Svg
+barPlot normalize color data =
+    let
+        w = 10
+        bar (x,y) =
+            let
+                (x1,y1) = normalize (x-w/2,y)
+                (x2,y2) = normalize (x+w/2,0)
+            in
+                Svg.rect
+                    [ Svg.x <| toString x1
+                    , Svg.y <| toString y1
+                    , Svg.width <| toString (x2-x1)
+                    , Svg.height <| toString (y2-y1)
+                    , Svg.fill color
+                    ] []
+    in
+        data
+        |> List.map bar
+        |> Svg.g []
 
 
 niceNum : Float -> Bool -> Float
@@ -119,7 +142,7 @@ ticks (min,max) =
         ticks' niceMin niceMax spacing niceMin []
 
 
-tickMarkX : (Float, Float) -> Normalize -> Float -> List Svg
+tickMarkX : (Float, Float) -> Normalize Point -> Float -> List Svg
 tickMarkX (w,h) normalize t =
     let
         x' = normalize (t,0) |> fst |> toString
@@ -129,7 +152,7 @@ tickMarkX (w,h) normalize t =
         ]
 
 
-tickMarkY : (Float, Float) -> Normalize -> Float -> List Svg
+tickMarkY : (Float, Float) -> Normalize Point -> Float -> List Svg
 tickMarkY (w,h) normalize t =
     let
         y' = normalize (0,t) |> snd |> toString
@@ -139,7 +162,7 @@ tickMarkY (w,h) normalize t =
         ]
 
 
-yAxis : (Float, Float) -> String -> Range -> Normalize -> Svg
+yAxis : (Float, Float) -> String -> Range -> Normalize Point -> Svg
 yAxis (w,h) label (min,max) normalize =
     ticks (min,max)
     |> List.map (tickMarkY (w,h) normalize)
@@ -153,7 +176,7 @@ yAxis (w,h) label (min,max) normalize =
     |> Svg.g []
 
 
-xAxis : (Float, Float) -> String -> Range -> Normalize -> Svg
+xAxis : (Float, Float) -> String -> Range -> Normalize Point -> Svg
 xAxis (w,h) label (min,max) normalize =
     ticks (min,max)
     |> List.map (tickMarkX (w,h) normalize)
@@ -224,6 +247,28 @@ graph (w,h) dataSets =
             --, legend data
             ]
         ]
+
+
+distplot : (Float,Float) -> List (Float, Float) -> Svg
+distplot (w,h) data =
+    let
+        svgW = w + 110 + (145-90) |> toString
+        svgH = h + 80 |> toString
+        (xmin, xmax) = data |> List.map fst |> determineRange
+        --(ymin, ymax) = (0.0, 50000000.0)
+        (ymin, ymax) = data |> List.map snd |> determineRange
+        normalize = (\(x, y) -> (linearScale (xmin,xmax) w x, linearScale (ymax,ymin) h y))
+        xl = Nothing |> Maybe.withDefault ""
+        yl = Nothing |> Maybe.withDefault ""
+    in
+        Svg.svg [width (svgW ++ "px"), height (svgH ++ "px"), viewBox ("-110 0 " ++ svgW ++ " " ++ svgH) ]
+        [ Svg.g [ transform "translate(0,30)" ]
+            [ xAxis (w,h) xl (xmin, xmax) normalize
+            , yAxis (w,h) yl (ymin, ymax) normalize
+            , barPlot normalize "#204a87" data
+            ]
+        ]
+
 
 compareGraph : (Float,Float) -> (String,a->Float) -> (String,a->Float) -> List (List a) -> Svg
 compareGraph (w,h) xdef ydef data =

@@ -6,12 +6,14 @@ import Effects
 import GraphExample
 import TableExample
 import MatrixExample
+import UnivariateDistributionExample
 
 
 demos =
     [ ("Tables", \_ _ -> TableExample.main)
     , ("Graphs", \_ _ -> GraphExample.main)
     , ("Matrix", MatrixExample.view)
+    , ("Univariate Distribution", \_ _ -> UnivariateDistributionExample.main)
     ]
 
 
