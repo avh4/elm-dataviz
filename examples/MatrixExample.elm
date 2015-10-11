@@ -47,7 +47,7 @@ view address model =
 update action model =
     case action of
         MatrixTable.Hover v ->
-            { model | hover <- Just v }
+            { model | hover = Just v }
             |> (flip (,)) Effects.none
 
 app =

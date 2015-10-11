@@ -112,22 +112,26 @@ niceNum range round =
     in
         (*) (10.0^exponent) <| case round of
             True ->
-                if | fraction < 1.5 -> 1.0
-                   | fraction < 3.0 -> 2.0
-                   | fraction < 7.0 -> 2.0
-                   | otherwise -> 10.0
+                if fraction < 1.5 then 1.0
+                else if fraction < 3.0 then 2.0
+                else if fraction < 7.0 then 2.0
+                else 10.0
             False ->
-                if | fraction <= 1 -> 1.0
-                   | fraction <= 2 -> 2.0
-                   | fraction <= 5 -> 5.0
-                   | otherwise -> 10.0
+                if fraction <= 1 then 1.0
+                else if fraction <= 2 then 2.0
+                else if fraction <= 5 then 5.0
+                else 10.0
 
 ticks' : Float -> Float -> Float -> Float -> List Float -> List Float
 ticks' min max spacing i acc =
-    if | i > max -> acc
-       | i < min + spacing*0.2 -> ticks' min max spacing (i+spacing) acc
-       | i > max - spacing*0.2 -> ticks' min max spacing (i+spacing) acc
-       | otherwise -> ticks' min max spacing (i+spacing) (i::acc)
+    if i > max then
+        acc
+    else if i < min + spacing*0.2 then
+        ticks' min max spacing (i+spacing) acc
+    else if i > max - spacing*0.2 then
+        ticks' min max spacing (i+spacing) acc
+    else
+        ticks' min max spacing (i+spacing) (i::acc)
 
 
 ticks : Range -> List Float
@@ -195,10 +199,10 @@ determineRange data =
         min = List.minimum data |> Maybe.withDefault 0
         max = List.maximum data |> Maybe.withDefault 100
     in
-        if  | min /= max -> (min,max)
-            | min < 0 -> (min,0)
-            | max > 0 -> (0, max)
-            | otherwise -> (0, 1)
+        if  min /= max then (min,max)
+        else if min < 0 then (min,0)
+        else if max > 0 then (0, max)
+        else (0, 1)
 
 type alias ScalingFn = (Range -> Float -> Float -> Float)
 
@@ -282,12 +286,12 @@ color' min max x =
     let
         p = (x-min) / (max-min)
         c =
-          if | p <=  1/6 -> "#dae8f5"
-             | p <=  2/6 -> "#bad6ea"
-             | p <=  3/6 -> "#88bedc"
-             | p <=  4/6 -> "#539dcc"
-             | p <=  5/6 -> "#297ab9"
-             | otherwise -> "#09559f"
+          if      p <=  1/6 then "#dae8f5"
+          else if p <=  2/6 then "#bad6ea"
+          else if p <=  3/6 then "#88bedc"
+          else if p <=  4/6 then "#539dcc"
+          else if p <=  5/6 then "#297ab9"
+          else                   "#09559f"
     in
       Html.div [ Html.style [("background", c), ("width", "5px"), ("height", "5px")]] []
 
