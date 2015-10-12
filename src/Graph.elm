@@ -122,16 +122,16 @@ niceNum range round =
                 else if fraction <= 5 then 5.0
                 else 10.0
 
-ticks' : Float -> Float -> Float -> Float -> List Float -> List Float
-ticks' min max spacing i acc =
+ticks2 : Float -> Float -> Float -> Float -> List Float -> List Float
+ticks2 min max spacing i acc =
     if i > max then
         acc
     else if i < min + spacing*0.2 then
-        ticks' min max spacing (i+spacing) acc
+        ticks2 min max spacing (i+spacing) acc
     else if i > max - spacing*0.2 then
-        ticks' min max spacing (i+spacing) acc
+        ticks2 min max spacing (i+spacing) acc
     else
-        ticks' min max spacing (i+spacing) (i::acc)
+        ticks2 min max spacing (i+spacing) (i::acc)
 
 
 ticks : Range -> List Float
@@ -143,7 +143,7 @@ ticks (min,max) =
         niceMin = floor (min/spacing) |> toFloat |> (*) spacing
         niceMax = ceiling (max/spacing) |> toFloat |> (*) spacing
     in
-        ticks' niceMin niceMax spacing niceMin []
+        ticks2 niceMin niceMax spacing niceMin []
 
 
 tickMarkX : (Float, Float) -> Normalize Point -> Float -> List Svg
