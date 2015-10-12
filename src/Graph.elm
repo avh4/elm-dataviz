@@ -85,7 +85,7 @@ scatterPlot normalize color data =
 barPlot : Normalize Point -> String -> List (Float, Float) -> Svg
 barPlot normalize color data =
     let
-        w = 10
+        w = 1
         bar (x,y) =
             let
                 (x1,y1) = normalize (x-w/2,y)
