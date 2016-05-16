@@ -1,8 +1,8 @@
+module Main exposing (..)
+
 import Html exposing (Html)
 import Html.Attributes as Html
-
-import StartApp
-import Effects
+import Html.App
 import GraphExample
 import TableExample
 import MatrixExample
@@ -10,34 +10,29 @@ import UnivariateDistributionExample
 
 
 demos =
-    [ ("Tables", \_ _ -> TableExample.main)
-    , ("Graphs", \_ _ -> GraphExample.main)
-    , ("Matrix", MatrixExample.view)
-    , ("Univariate Distribution", \_ _ -> UnivariateDistributionExample.main)
+    [ ( "Tables", \_ -> TableExample.view )
+    , ( "Graphs", \_ -> GraphExample.view )
+    , ( "Matrix", MatrixExample.view )
+    , ( "Univariate Distribution", \_ -> UnivariateDistributionExample.view )
     ]
 
 
-renderDemo address model (title, view) =
-    [ Html.h2 [] [ Html.text title]
-    , view address model
+renderDemo model ( title, view ) =
+    [ Html.h2 [] [ Html.text title ]
+    , view model
     ]
 
 
-view address model =
+view model =
     demos
-    |> List.concatMap (renderDemo address model)
-    |> Html.div
-        [ Html.style [("padding", "48px")] ]
-
-
-app =
-    StartApp.start
-        { init = MatrixExample.init
-        , update = MatrixExample.update
-        , view = view
-        , inputs = []
-        }
+        |> List.concatMap (renderDemo model)
+        |> Html.div [ Html.style [ ( "padding", "48px" ) ] ]
 
 
 main =
-    app.html
+    Html.App.program
+        { init = MatrixExample.init
+        , update = MatrixExample.update
+        , view = view
+        , subscriptions = \_ -> Sub.none
+        }

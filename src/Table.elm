@@ -1,4 +1,4 @@
-module Table (table) where
+module Table exposing (table)
 
 {-|
 
@@ -9,15 +9,17 @@ This module provides functions to render tabular views of data.
 -}
 
 import Html exposing (Html)
-import Html.Attributes as Html
 
-cell : a -> (a -> String) -> Html
+
+cell : a -> (a -> String) -> Html msg
 cell data fn =
     Html.td [] [ Html.text (fn data) ]
 
-row : List (a -> String) -> a -> Html
+
+row : List (a -> String) -> a -> Html msg
 row fns row =
     Html.tr [] (List.map (cell row) fns)
+
 
 {-| Renders a tabular view of a list of data, where each row represents a single item in the list.
 
@@ -43,18 +45,24 @@ main =
 ```
 
 -}
-table : List (String, (a -> String)) -> List a -> Html
+table : List ( String, a -> String ) -> List a -> Html msg
 table columnDefinitions data =
     let
-        headers = (List.map fst columnDefinitions)
-        cellFns = (List.map snd columnDefinitions)
-        singleList a = [a]
+        headers =
+            (List.map fst columnDefinitions)
+
+        cellFns =
+            (List.map snd columnDefinitions)
+
+        singleList a =
+            [ a ]
+
         headerRow =
             headers
-            |> List.map (Html.text >> singleList >> Html.th [])
-            |> Html.tr []
+                |> List.map (Html.text >> singleList >> Html.th [])
+                |> Html.tr []
     in
         data
-        |> List.map (row cellFns)
-        |> (::) headerRow
-        |> Html.table []
+            |> List.map (row cellFns)
+            |> (::) headerRow
+            |> Html.table []

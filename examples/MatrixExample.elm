@@ -1,10 +1,9 @@
-module MatrixExample where
+module MatrixExample exposing (..)
 
 import Graph
-import StartApp
-import Effects
 import MatrixTable
 import Html
+import Html.App
 
 
 type alias Model =
@@ -14,29 +13,34 @@ type alias Model =
 
 
 f : Float -> Float -> Float
-f x y = (x+y) * (2*x - y)
+f x y =
+    (x + y) * (2 * x - y)
+
 
 data : Graph.DenseDataset
 data =
-    List.concatMap (\a -> List.map (\b -> ((a,b),f a b)) [-20..20]) [-20..20]
-    |> Graph.matrixDataset "Example"
-        ("A", fst >> fst)
-        ("B", fst >> snd)
-        ("Value", snd)
-        0
+    List.concatMap (\a -> List.map (\b -> ( ( a, b ), f a b )) [-20..20]) [-20..20]
+        |> Graph.matrixDataset "Example"
+            ( "A", fst >> fst )
+            ( "B", fst >> snd )
+            ( "Value", snd )
+            0
 
 
-init = (Model Nothing data, Effects.none)
+init =
+    ( Model Nothing data, Cmd.none )
 
 
-view address model =
+view model =
     let
         graph =
             model.data
-            |> Graph.matrix address
+                |> Graph.matrix
     in
         case model.hover of
-            Nothing -> graph
+            Nothing ->
+                graph
+
             Just v ->
                 Html.div []
                     [ graph
@@ -48,15 +52,13 @@ update action model =
     case action of
         MatrixTable.Hover v ->
             { model | hover = Just v }
-            |> (flip (,)) Effects.none
+                |> (flip (,)) Cmd.none
 
-app =
-    StartApp.start
+
+main =
+    Html.App.program
         { init = init
         , update = update
         , view = view
-        , inputs = []
+        , subscriptions = \_ -> Sub.none
         }
-
-
-main = app.html

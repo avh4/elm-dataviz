@@ -1,4 +1,4 @@
-module MatrixTable where
+module MatrixTable exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes as Html
@@ -9,28 +9,32 @@ type alias Model a =
     List (List a)
 
 
-type Action a
+type Msg a
     = Hover a
 
 
-view : (a -> Html) -> Signal.Address (Action a) -> Model a -> Html
-view cellDefinition address data =
+view : (a -> Html (Msg a)) -> Model a -> Html (Msg a)
+view cellDefinition data =
     let
-        singleList a = [a]
+        singleList a =
+            [ a ]
+
         attrs a =
             [ Html.style
-                [ ("padding", "0")
-                , ("margin", "0")
+                [ ( "padding", "0" )
+                , ( "margin", "0" )
                 ]
-            , Html.onMouseOver address (Hover a)
+            , Html.onMouseOver (Hover a)
             ]
+
         cell a =
-            Html.td (attrs a) [cellDefinition a]
+            Html.td (attrs a) [ cellDefinition a ]
+
         row data =
             data
-            |> List.map cell
-            |> Html.tr []
+                |> List.map cell
+                |> Html.tr []
     in
         data
-        |> List.map row
-        |> Html.table [ Html.style [("border-collapse", "collapse")]]
+            |> List.map row
+            |> Html.table [ Html.style [ ( "border-collapse", "collapse" ) ] ]
